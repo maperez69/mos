@@ -97,48 +97,52 @@
 
         const DATA = {
             resumen: {
-                Todas: { dic: 1088444, nov: 1294981, trans_dic: 224, trans_nov: 245, ticket_dic: 4859, ticket_nov: 5285 },
-                Buenavista: { dic: 783083, nov: 722637, trans_dic: 158, trans_nov: 142, ticket_dic: 4956, ticket_nov: 5089 },
-                Masaryk: { dic: 305361, nov: 572343, trans_dic: 66, trans_nov: 103, ticket_dic: 4626, ticket_nov: 5556 }
+                Todas: { ene: 1036091.6, dic: 1088444, nov: 1294981, t_ene: 215, t_dic: 224, t_nov: 245, tick_ene: 4819, tick_dic: 4859, tick_nov: 5285 },
+                Buenavista: { ene: 797114.9, dic: 783083, nov: 722637, t_ene: 162, t_dic: 158, t_nov: 142, tick_ene: 4920, tick_dic: 4956, tick_nov: 5089 },
+                Masaryk: { ene: 238976.7, dic: 305361, nov: 572343, t_ene: 53, t_dic: 66, t_nov: 103, tick_ene: 4509, tick_dic: 4626, tick_nov: 5556 }
             },
             departamentos: [
-                { name: 'Medicina Estética', sucursal: 'Buenavista', dic: 437780, nov: 266910 },
-                { name: 'Aparatología', sucursal: 'Buenavista', dic: 132920, nov: 226470 },
-                { name: 'Farmacia', sucursal: 'Buenavista', dic: 99663, nov: 99970 },
-                { name: 'Stellar M22', sucursal: 'Buenavista', dic: 51820, nov: 79280 },
-                { name: 'Cosmetología', sucursal: 'Buenavista', dic: 25400, nov: 11170 },
-                { name: 'Aparatología', sucursal: 'Masaryk', dic: 81134, nov: 290080 },
-                { name: 'Medicina Estética', sucursal: 'Masaryk', dic: 73600, nov: 147885 },
-                { name: 'Farmacia', sucursal: 'Masaryk', dic: 65695, nov: 49798 },
-                { name: 'Cosmetología', sucursal: 'Masaryk', dic: 31632, nov: 17980 },
-                { name: 'Membresía', sucursal: 'Masaryk', dic: 28800, nov: 0 }
+                { name: 'Medicina Estética', sucursal: 'Buenavista', ene: 313940, dic: 437780, nov: 266910 },
+                { name: 'Aparatología', sucursal: 'Buenavista', ene: 115787, dic: 132920, nov: 226470 },
+                { name: 'Farmacia', sucursal: 'Buenavista', ene: 146087, dic: 99663, nov: 99970 },
+                { name: 'Stellar M22', sucursal: 'Buenavista', ene: 34900, dic: 51820, nov: 79280 },
+                { name: 'Cosmetología', sucursal: 'Buenavista', ene: 22800, dic: 25400, nov: 11170 },
+                { name: 'Membresía', sucursal: 'Buenavista', ene: 149000, dic: 12500, nov: 1500 },
+                { name: 'Aparatología', sucursal: 'Masaryk', ene: 26000, dic: 81134, nov: 290080 },
+                { name: 'Medicina Estética', sucursal: 'Masaryk', ene: 100720, dic: 73600, nov: 147885 },
+                { name: 'Farmacia', sucursal: 'Masaryk', ene: 56156, dic: 65695, nov: 49798 },
+                { name: 'Cosmetología', sucursal: 'Masaryk', ene: 14300, dic: 31632, nov: 17980 },
+                { name: 'Membresía', sucursal: 'Masaryk', ene: 28800, dic: 28800, nov: 0 }
             ],
             vendedores: [
-                { name: 'Mar Campos', sucursal: 'Buenavista', dic: 451356, nov: 319608 },
-                { name: 'Aura Castro', sucursal: 'Buenavista', dic: 130407, nov: 82956 },
-                { name: 'Samantha Glez', sucursal: 'Buenavista', dic: 51601, nov: 78860 },
-                { name: 'Paulina', sucursal: 'Masaryk', dic: 62530, nov: 157176 },
-                { name: 'Daniela Pérez', sucursal: 'Masaryk', dic: 69906, nov: 134101 },
-                { name: 'Recep. Masaryk', sucursal: 'Masaryk', dic: 70963, nov: 57805 },
-                { name: 'Adriana Álvarez', sucursal: 'Masaryk', dic: 40800, nov: 28405 }
+                { name: 'Mar Campos', sucursal: 'Buenavista', ene: 358871, dic: 451356, nov: 319608 },
+                { name: 'Aura Castro', sucursal: 'Buenavista', ene: 97668, dic: 130407, nov: 82956 },
+                { name: 'Samantha Glez', sucursal: 'Buenavista', ene: 86666, dic: 51601, nov: 78860 },
+                { name: 'Hanna Esquivel', sucursal: 'Buenavista', ene: 35064, dic: 14858, nov: 23003 },
+                { name: 'Buenavista Gral', sucursal: 'Buenavista', ene: 218843, dic: 127239, nov: 118850 },
+                { name: 'Recep. Masaryk', sucursal: 'Masaryk', ene: 58872, dic: 70963, nov: 57805 },
+                { name: 'Daniela Pérez', sucursal: 'Masaryk', ene: 31153, dic: 69906, nov: 134101 },
+                { name: 'Paulina', sucursal: 'Masaryk', ene: 26427, dic: 62530, nov: 157176 },
+                { name: 'Adriana Álvarez', sucursal: 'Masaryk', ene: 23620, dic: 40800, nov: 28405 },
+                { name: 'Itzel Bravo', sucursal: 'Masaryk', ene: 20433, dic: 20911, nov: 55918 }
             ],
             productos: [
-                { name: 'Liftera C+C', sucursal: 'Buenavista', dic: 105600, nov: 85400 },
-                { name: 'Toxina 3Z', sucursal: 'Buenavista', dic: 98000, nov: 112000 },
-                { name: 'Filler Labios', sucursal: 'Buenavista', dic: 42500, nov: 35000 },
-                { name: 'Liftera Cara 1S', sucursal: 'Masaryk', dic: 48000, nov: 92000 },
-                { name: 'Toxina 3Z (M)', sucursal: 'Masaryk', dic: 35000, nov: 45000 },
-                { name: 'Hydrafacial', sucursal: 'Masaryk', dic: 24600, nov: 18000 }
+                { name: 'Liftera C+C', sucursal: 'Buenavista', ene: 112000, dic: 105600, nov: 85400 },
+                { name: 'Toxina 3Z', sucursal: 'Buenavista', ene: 85000, dic: 98000, nov: 112000 },
+                { name: 'Filler Labios', sucursal: 'Buenavista', ene: 38000, dic: 42500, nov: 35000 },
+                { name: 'Hydrafacial', sucursal: 'Masaryk', ene: 31000, dic: 24600, nov: 18000 },
+                { name: 'Toxina 3Z (M)', sucursal: 'Masaryk', ene: 28000, dic: 35000, nov: 45000 }
             ],
             historico: [
                 { mes: 'Noviembre', Buenavista: 722637, Masaryk: 572343, Todas: 1294980 },
-                { mes: 'Diciembre', Buenavista: 783083, Masaryk: 305361, Todas: 1088444 }
+                { mes: 'Diciembre', Buenavista: 783083, Masaryk: 305361, Todas: 1088444 },
+                { mes: 'Enero', Buenavista: 797115, Masaryk: 238977, Todas: 1036092 }
             ]
         };
 
         const App = () => {
             const [activeSucursal, setActiveSucursal] = useState('Todas');
-            const [activeMonth, setActiveMonth] = useState('Diciembre'); 
+            const [activeMonth, setActiveMonth] = useState('Enero'); 
             const [activeTab, setActiveTab] = useState('depto');
             
             useEffect(() => {
@@ -148,21 +152,37 @@
             const formatCurrency = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(val);
 
             const stats = DATA.resumen[activeSucursal];
-            const displayRevenue = activeMonth === 'Noviembre' ? stats.nov : stats.dic;
             
+            // Lógica de valores según mes
+            const currentVal = activeMonth === 'Enero' ? stats.ene : activeMonth === 'Diciembre' ? stats.dic : stats.nov;
+            const prevVal = activeMonth === 'Enero' ? stats.dic : activeMonth === 'Diciembre' ? stats.nov : null;
+            
+            const currentTrans = activeMonth === 'Enero' ? stats.t_ene : activeMonth === 'Diciembre' ? stats.t_dic : stats.t_nov;
+            const currentTicket = activeMonth === 'Enero' ? stats.tick_ene : activeMonth === 'Diciembre' ? stats.tick_dic : stats.tick_nov;
+
             const comparisonData = useMemo(() => {
                 let source = activeTab === 'depto' ? DATA.departamentos : activeTab === 'vendedor' ? DATA.vendedores : DATA.productos;
                 const grouped = {};
                 source.forEach(item => {
                     if (activeSucursal === 'Todas' || item.sucursal === activeSucursal) {
-                        if (!grouped[item.name]) grouped[item.name] = { name: item.name, dic: 0, nov: 0 };
-                        grouped[item.name].dic += item.dic;
-                        grouped[item.name].nov += item.nov;
+                        if (!grouped[item.name]) grouped[item.name] = { name: item.name, ene: 0, dic: 0, nov: 0 };
+                        grouped[item.name].ene += (item.ene || 0);
+                        grouped[item.name].dic += (item.dic || 0);
+                        grouped[item.name].nov += (item.nov || 0);
                     }
                 });
                 return Object.values(grouped)
-                    .map(item => ({ ...item, current: activeMonth === 'Noviembre' ? item.nov : item.dic, growth: item.nov > 0 ? ((item.dic - item.nov) / item.nov) * 100 : 100 }))
-                    .sort((a, b) => b.dic - a.dic)
+                    .map(item => {
+                        const cur = activeMonth === 'Enero' ? item.ene : activeMonth === 'Diciembre' ? item.dic : item.nov;
+                        const pre = activeMonth === 'Enero' ? item.dic : activeMonth === 'Diciembre' ? item.nov : null;
+                        return { 
+                            ...item, 
+                            current: cur, 
+                            previous: pre,
+                            growth: pre > 0 ? ((cur - pre) / pre) * 100 : 0 
+                        };
+                    })
+                    .sort((a, b) => b.current - a.current)
                     .slice(0, 6);
             }, [activeSucursal, activeTab, activeMonth]);
 
@@ -177,15 +197,15 @@
                                 React.createElement('h1', { className: 'text-2xl font-extrabold text-slate-900 tracking-tight' }, 'Reporte de Ventas'),
                                 React.createElement('div', { className: 'flex items-center gap-2 mt-1' }, [
                                     React.createElement('span', { className: 'w-1.5 h-1.5 rounded-full bg-indigo-500' }),
-                                    React.createElement('p', { className: 'text-[11px] font-bold text-slate-500 uppercase tracking-widest' }, `${activeSucursal} • ${activeMonth} 2025`)
+                                    React.createElement('p', { className: 'text-[11px] font-bold text-slate-500 uppercase tracking-widest' }, `${activeSucursal} • ${activeMonth} 2026`)
                                 ])
                             ]),
                             // SELECTOR DE MES
-                            React.createElement('div', { className: 'flex bg-slate-50 p-1 rounded-full border border-slate-100' }, 
-                                ['Noviembre', 'Diciembre'].map(m => React.createElement('button', {
+                            React.createElement('div', { className: 'flex bg-slate-50 p-1 rounded-full border border-slate-100 overflow-x-auto no-scrollbar max-w-[140px]' }, 
+                                ['Noviembre', 'Diciembre', 'Enero'].map(m => React.createElement('button', {
                                     key: m,
                                     onClick: () => setActiveMonth(m),
-                                    className: `px-4 py-1.5 rounded-full text-[10px] font-bold transition-all ${activeMonth === m ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`
+                                    className: `px-3 py-1.5 rounded-full text-[10px] font-bold transition-all whitespace-nowrap ${activeMonth === m ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`
                                 }, m.substring(0,3)))
                             )
                         ]),
@@ -205,10 +225,10 @@
                     
                     // MÉTRICAS
                     React.createElement('div', { className: 'grid grid-cols-2 gap-4' }, [
-                        { label: 'Facturación', val: formatCurrency(displayRevenue), color: 'text-slate-900' },
-                        { label: 'Crecimiento', val: activeMonth === 'Diciembre' ? `${(((stats.dic-stats.nov)/stats.nov)*100).toFixed(0)}%` : '-', color: 'text-indigo-600' },
-                        { label: 'Ticket Medio', val: formatCurrency(activeMonth === 'Diciembre' ? stats.ticket_dic : stats.ticket_nov), color: 'text-slate-900' },
-                        { label: 'Transacciones', val: activeMonth === 'Diciembre' ? stats.trans_dic : stats.trans_nov, color: 'text-slate-900' }
+                        { label: 'Facturación', val: formatCurrency(currentVal), color: 'text-slate-900' },
+                        { label: 'Crecimiento', val: prevVal ? `${(((currentVal-prevVal)/prevVal)*100).toFixed(0)}%` : '-', color: 'text-indigo-600' },
+                        { label: 'Ticket Medio', val: formatCurrency(currentTicket), color: 'text-slate-900' },
+                        { label: 'Transacciones', val: currentTrans, color: 'text-slate-900' }
                     ].map(kpi => React.createElement('div', { key: kpi.label, className: 'card-mos p-6' }, [
                         React.createElement('p', { className: 'text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2' }, kpi.label),
                         React.createElement('h3', { className: `text-lg font-black ${kpi.color} tracking-tight` }, kpi.val)
@@ -218,7 +238,7 @@
                     React.createElement('div', { className: 'card-mos p-6' }, [
                         React.createElement('div', { className: 'flex justify-between items-center mb-8' }, [
                             React.createElement('h3', { className: 'text-[10px] font-black text-slate-800 uppercase tracking-[0.2em]' }, 'Análisis de Rendimiento'),
-                            activeMonth === 'Diciembre' && React.createElement('div', { className: 'flex gap-2' }, [
+                            activeMonth !== 'Noviembre' && React.createElement('div', { className: 'flex gap-2' }, [
                                 React.createElement('div', { className: 'w-2 h-2 bg-slate-100 rounded-full' }),
                                 React.createElement('div', { className: 'w-2 h-2 bg-indigo-500 rounded-full' })
                             ])
@@ -230,11 +250,11 @@
                                     React.createElement(YAxis, { dataKey: 'name', type: 'category', width: 100, axisLine: false, tickLine: false, tick: {fill: '#94a3b8', fontSize: 10, fontWeight: 700} }),
                                     React.createElement(Tooltip, { formatter: v => formatCurrency(v), cursor: {fill: '#F9FAFB', radius: 12} }),
                                     
-                                    activeMonth === 'Diciembre' ? [
-                                        React.createElement(Bar, { key: 'n', dataKey: 'nov', fill: '#F1F5F9', radius: [0, 8, 8, 0], barSize: 8 }),
-                                        React.createElement(Bar, { key: 'd', dataKey: 'dic', fill: '#4f46e5', radius: [0, 8, 8, 0], barSize: 8 })
+                                    activeMonth !== 'Noviembre' ? [
+                                        React.createElement(Bar, { key: 'p', dataKey: 'previous', fill: '#F1F5F9', radius: [0, 8, 8, 0], barSize: 8 }),
+                                        React.createElement(Bar, { key: 'c', dataKey: 'current', fill: '#4f46e5', radius: [0, 8, 8, 0], barSize: 8 })
                                     ] : 
-                                    React.createElement(Bar, { dataKey: 'nov', fill: '#4f46e5', radius: [0, 10, 10, 0], barSize: 20 })
+                                    React.createElement(Bar, { dataKey: 'current', fill: '#4f46e5', radius: [0, 10, 10, 0], barSize: 20 })
                                 ])
                             )
                         )
@@ -248,12 +268,12 @@
                                 React.createElement('span', { className: 'text-xs font-black text-slate-200' }, `0${i+1}`),
                                 React.createElement('div', null, [
                                     React.createElement('p', { className: 'text-xs font-bold text-slate-900 leading-none' }, item.name),
-                                    activeMonth === 'Diciembre' && React.createElement('p', { className: 'text-[9px] font-bold text-slate-400 mt-1.5 uppercase' }, `Nov: ${formatCurrency(item.nov)}`)
+                                    activeMonth !== 'Noviembre' && React.createElement('p', { className: 'text-[9px] font-bold text-slate-400 mt-1.5 uppercase' }, `Anterior: ${formatCurrency(item.previous)}`)
                                 ])
                             ]),
                             React.createElement('div', { className: 'text-right' }, [
-                                React.createElement('p', { className: 'text-xs font-black text-slate-900' }, formatCurrency(activeMonth === 'Noviembre' ? item.nov : item.dic)),
-                                activeMonth === 'Diciembre' && React.createElement('div', { className: `flex items-center justify-end gap-1 mt-1 ${item.dic >= item.nov ? 'text-emerald-500' : 'text-rose-500'}` }, [
+                                React.createElement('p', { className: 'text-xs font-black text-slate-900' }, formatCurrency(item.current)),
+                                activeMonth !== 'Noviembre' && React.createElement('div', { className: `flex items-center justify-end gap-1 mt-1 ${item.growth >= 0 ? 'text-emerald-500' : 'text-rose-500'}` }, [
                                     React.createElement('span', { className: 'text-[10px] font-black' }, `${item.growth > 0 ? '+' : ''}${item.growth.toFixed(0)}%`)
                                 ])
                             ])
