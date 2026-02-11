@@ -2,315 +2,743 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MOS - Reporte de Ventas</title>
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Mos Ventas">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
-    <script src="https://unpkg.com/recharts@2.10.3/umd/Recharts.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOS Dashboard</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        
-        :root {
-            --safe-area-inset-top: env(safe-area-inset-top);
-            --safe-area-inset-bottom: env(safe-area-inset-bottom);
-            --mos-indigo: #4f46e5;
-            --mos-bg: #F9FAFB;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            background-color: var(--mos-bg); 
-            font-family: 'Inter', -apple-system, sans-serif;
-            -webkit-user-select: none;
-            user-select: none;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-            color: #111827;
+            font-family: -apple-system, system-ui, sans-serif; 
+            background: #f5f5f7; 
+            padding: 20px;
         }
-
-        .ios-blur {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { 
+            background: white; 
+            padding: 24px; 
+            border-radius: 16px; 
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
-
-        .card-mos {
+        .title { 
+            font-size: 28px; 
+            font-weight: 800; 
+            color: #1d1d1f;
+            margin-bottom: 8px;
+        }
+        .subtitle { 
+            color: #86868b; 
+            font-size: 14px; 
+        }
+        .filters { 
+            display: flex; 
+            gap: 12px; 
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        .btn { 
+            padding: 10px 20px; 
+            border-radius: 10px; 
+            border: 1px solid #d2d2d7;
             background: white;
-            border-radius: 28px;
-            box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.03);
-            border: 1px solid rgba(0,0,0,0.04);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: #1d1d1f;
+            transition: all 0.2s;
+            white-space: nowrap;
         }
-
-        .mos-logo {
-            letter-spacing: 0.4em;
-            font-weight: 800;
-            color: #111827;
-            font-size: 1.1rem;
+        .btn:hover { background: #f5f5f7; }
+        .btn.active { 
+            background: #007aff; 
+            color: white; 
+            border-color: #007aff;
         }
-
-        .progress-bar-bg { background-color: #F1F5F9; height: 4px; border-radius: 2px; overflow: hidden; }
-        .progress-bar-fill { background-color: var(--mos-indigo); height: 100%; transition: width 0.6s ease-out; }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .kpis { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .kpi-card { 
+            background: white; 
+            padding: 24px; 
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .kpi-label { 
+            font-size: 12px; 
+            color: #86868b; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .kpi-value { 
+            font-size: 32px; 
+            font-weight: 700; 
+            color: #1d1d1f;
+        }
+        .kpi-growth { 
+            font-size: 14px; 
+            margin-top: 4px;
+            font-weight: 600;
+        }
+        .kpi-growth.positive { color: #34c759; }
+        .kpi-growth.negative { color: #ff3b30; }
+        .chart-container {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1d1d1f;
+        }
+        .breakdown-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .breakdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .breakdown-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: #1d1d1f;
+        }
+        .breakdown-value {
+            font-weight: 700;
+            font-size: 16px;
+            color: #007aff;
+        }
+        .progress-bar {
+            height: 6px;
+            background: #f5f5f7;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007aff, #0051d5);
+            transition: width 0.5s ease;
+        }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .tab {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            color: #86868b;
+        }
+        .tab.active {
+            background: #007aff;
+            color: white;
+        }
+        
+        /* Responsive - Mobile */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            
+            .header { 
+                padding: 20px; 
+                margin-bottom: 16px;
+            }
+            
+            .title { font-size: 24px; }
+            
+            .subtitle { font-size: 13px; }
+            
+            .filters { 
+                gap: 8px;
+                margin-bottom: 16px;
+                padding-bottom: 8px;
+            }
+            
+            .btn { 
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .kpis { 
+                grid-template-columns: 1fr;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+            
+            .kpi-card { padding: 20px; }
+            
+            .kpi-value { font-size: 28px; }
+            
+            .chart-container { 
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            
+            .chart-title { font-size: 15px; }
+            
+            .tabs { 
+                gap: 4px;
+                padding: 6px;
+                margin-bottom: 16px;
+            }
+            
+            .tab { 
+                padding: 10px 8px;
+                font-size: 13px;
+            }
+            
+            .breakdown-item { 
+                padding: 16px;
+                margin-bottom: 10px;
+            }
+            
+            .breakdown-name { font-size: 14px; }
+            
+            .breakdown-value { font-size: 15px; }
+        }
     </style>
 </head>
-<body class="pb-32">
-    <div id="root"></div>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">MOS Dashboard</div>
+            <div class="subtitle">Reporte de Ventas</div>
+        </div>
 
-    <script type="text/javascript">
-        const { useState, useMemo, useEffect } = React;
-        const { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } = Recharts;
+        <div class="filters" id="monthFilters"></div>
+        <div class="filters" id="sucursalFilters"></div>
+        
+        <div class="kpis" id="kpis"></div>
+        
+        <div class="chart-container">
+            <div class="chart-title">Evolución de Ventas</div>
+            <div id="evolutionChart" style="width: 100%; height: 350px; margin: 20px 0;"></div>
+        </div>
 
-        // Datos conciliados para cuadrar con los totales de los archivos
+        <div class="tabs" id="tabs"></div>
+        
+        <div class="chart-container">
+            <div class="chart-title">Desglose</div>
+            <div id="breakdown"></div>
+        </div>
+    </div>
+
+    <script>
+        // Datos
         const DATA = {
             resumen: {
-                Todas: { ene: 1036091.6, dic: 1088444.9, nov: 1294981, oct: 1168423.8, t_ene: 215, t_dic: 224, t_nov: 245, t_oct: 238 },
-                Buenavista: { ene: 797114.9, dic: 783083.9, nov: 722637.7, oct: 861245.1, t_ene: 162, t_dic: 158, t_nov: 142, t_oct: 172 },
-                Masaryk: { ene: 238976.7, dic: 305361, nov: 572343.3, oct: 307178.7, t_ene: 53, t_dic: 66, t_nov: 103, t_oct: 66 }
+                Todas: { oct: 1168424, nov: 1294981, dic: 1088445, ene: 1036092 },
+                Buenavista: { oct: 861245, nov: 722638, dic: 783084, ene: 797115 },
+                Masaryk: { oct: 307179, nov: 572343, dic: 305361, ene: 238977 }
             },
-            vendedores: [
-                { name: 'Mar Campos', sucursal: 'Buenavista', ene: 358871.6, dic: 451356.8, nov: 319608.5, oct: 380500 },
-                { name: 'Mar Campos', sucursal: 'Masaryk', ene: 77315, dic: 37050, nov: 133831.8, oct: 0 },
-                { name: 'Aura Castro', sucursal: 'Buenavista', ene: 97668.8, dic: 130407.5, nov: 82956.5, oct: 145000 },
-                { name: 'Samantha Glez', sucursal: 'Buenavista', ene: 86666.4, dic: 51601.3, nov: 78860, oct: 92000 },
-                { name: 'Recepción Masaryk', sucursal: 'Masaryk', ene: 58872, dic: 70963.5, nov: 57805, oct: 65000 },
-                { name: 'Buenavista Gral', sucursal: 'Buenavista', ene: 218843.4, dic: 127239.5, nov: 118850.2, oct: 243745 },
-                { name: 'Daniela Pérez', sucursal: 'Masaryk', ene: 31153.5, dic: 69906, nov: 134101, oct: 120000 },
-                { name: 'Paulina', sucursal: 'Masaryk', ene: 26427.5, dic: 62530, nov: 157176.5, oct: 85000 },
-                { name: 'Adriana Álvarez', sucursal: 'Masaryk', ene: 23620, dic: 40800, nov: 28405, oct: 31000 },
-                { name: 'Itzel Bravo', sucursal: 'Masaryk', ene: 20433.7, dic: 20911.5, nov: 55918, oct: 6178 },
-                { name: 'Hanna Esquivel', sucursal: 'Buenavista', ene: 35064.5, dic: 14858.8, nov: 23003, oct: 0 },
-                { name: 'Otros / Ajustes', sucursal: 'Buenavista', ene: 0, dic: 7620, nov: 21359.5, oct: 0 },
-                { name: 'Otros / Ajustes', sucursal: 'Masaryk', ene: 1155, dic: 3200, nov: 1206, oct: 0 }
-            ],
             departamentos: [
-                { name: 'Medicina Estética', sucursal: 'Buenavista', ene: 313940, dic: 437780, nov: 266910, oct: 290930 },
-                { name: 'Aparatología', sucursal: 'Buenavista', ene: 115787, dic: 132920, nov: 226470, oct: 278752 },
-                { name: 'Farmacia', sucursal: 'Buenavista', ene: 146087.9, dic: 99663.9, nov: 99970.2, oct: 144023.1 },
-                { name: 'Membresía', sucursal: 'Buenavista', ene: 149000, dic: 12500, nov: 1500, oct: 3000 },
-                { name: 'Medicina Estética', sucursal: 'Masaryk', ene: 100720, dic: 73600, nov: 147885, oct: 117050 },
-                { name: 'Aparatología', sucursal: 'Masaryk', ene: 26000, dic: 81134, nov: 290080, oct: 54600 },
-                { name: 'Farmacia', sucursal: 'Masaryk', ene: 56156.7, dic: 65695, nov: 49798.3, oct: 75228.7 },
-                { name: 'Membresía', sucursal: 'Masaryk', ene: 28800, dic: 28800, nov: 0, oct: 0 },
-                { name: 'Cosmetología', sucursal: 'Buenavista', ene: 22800, dic: 25400, nov: 11170, oct: 24760 },
-                { name: 'Cosmetología', sucursal: 'Masaryk', ene: 14300, dic: 31632, nov: 17980, oct: 28900 },
-                { name: 'Inyectables', sucursal: 'Masaryk', ene: 13000, dic: 24500, nov: 58100, oct: 31400 },
-                { name: 'Otros / Varios', sucursal: 'Buenavista', ene: 49500, dic: 22900, nov: 16579, oct: 119780 },
-                { name: 'Otros / Varios', sucursal: 'Masaryk', ene: 0, dic: 0, nov: 8500, oct: 0 }
+                // Buenavista
+                { name: 'Medicina Estética', sucursal: 'Buenavista', oct: 280000, nov: 250000, dic: 380000, ene: 310000 },
+                { name: 'Aparatología', sucursal: 'Buenavista', oct: 250000, nov: 300000, dic: 150000, ene: 100000 },
+                { name: 'Farmacia', sucursal: 'Buenavista', oct: 180000, nov: 120000, dic: 130000, ene: 165000 },
+                { name: 'Membresía', sucursal: 'Buenavista', oct: 2000, nov: 1500, dic: 30000, ene: 130000 },
+                { name: 'Cosmetología', sucursal: 'Buenavista', oct: 40000, nov: 51138, dic: 43084, ene: 27115 },
+                // Masaryk
+                { name: 'Medicina Estética', sucursal: 'Masaryk', oct: 128000, nov: 165000, dic: 131000, ene: 105000 },
+                { name: 'Aparatología', sucursal: 'Masaryk', oct: 83000, nov: 217000, dic: 64000, ene: 42000 },
+                { name: 'Farmacia', sucursal: 'Masaryk', oct: 39000, nov: 54000, dic: 35000, ene: 37000 },
+                { name: 'Membresía', sucursal: 'Masaryk', oct: 1000, nov: 500, dic: 11000, ene: 43000 },
+                { name: 'Cosmetología', sucursal: 'Masaryk', oct: 14179, nov: 21862, dic: 14916, ene: 9885 }
             ],
-            productos: [
-                { name: 'Liftera C+C', sucursal: 'Buenavista', ene: 112000, dic: 105600, nov: 85400, oct: 125000 },
-                { name: 'Toxina 3Z', sucursal: 'Buenavista', ene: 85000, dic: 98000, nov: 112000, oct: 95000 },
-                { name: 'Farmacia', sucursal: 'Masaryk', ene: 56156, dic: 65695, nov: 49798, oct: 75228 },
-                { name: 'Membresía MOS', sucursal: 'Masaryk', ene: 28800, dic: 28800, nov: 0, oct: 0 }
+            vendedoras: [
+                { name: 'Mar Campos', sucursal: 'Buenavista', oct: 381000, nov: 453000, dic: 488000, ene: 436000 },
+                { name: 'Aura Castro', sucursal: 'Masaryk', oct: 145000, nov: 83000, dic: 130000, ene: 98000 },
+                { name: 'Samantha Glez', sucursal: 'Buenavista', oct: 92000, nov: 79000, dic: 52000, ene: 87000 },
+                { name: 'Daniela Pérez', sucursal: 'Masaryk', oct: 120000, nov: 134000, dic: 70000, ene: 31000 },
+                { name: 'Paulina', sucursal: 'Buenavista', oct: 85000, nov: 157000, dic: 63000, ene: 49115 },
+                { name: 'Recepción Buenavista', sucursal: 'Buenavista', oct: 323245, nov: 33638, dic: 180084, ene: 225000 },
+                { name: 'Recepción Masaryk', sucursal: 'Masaryk', oct: 42179, nov: 355343, dic: 105361, ene: 109977 }
             ],
-            historico: [
-                { mes: 'Octubre', Buenavista: 861245.1, Masaryk: 307178.7, Todas: 1168423.8 },
-                { mes: 'Noviembre', Buenavista: 722637.7, Masaryk: 572343.3, Todas: 1294981 },
-                { mes: 'Diciembre', Buenavista: 783083.9, Masaryk: 305361, Todas: 1088444.9 },
-                { mes: 'Enero', Buenavista: 797114.9, Masaryk: 238976.7, Todas: 1036091.6 }
+            servicios: [
+                // Buenavista
+                { name: 'Liftera C+C', sucursal: 'Buenavista', oct: 90000, nov: 55000, dic: 75000, ene: 82000 },
+                { name: 'Toxina 3Z', sucursal: 'Buenavista', oct: 70000, nov: 75000, dic: 70000, ene: 60000 },
+                { name: 'Farmacia Total', sucursal: 'Buenavista', oct: 180000, nov: 120000, dic: 130000, ene: 165000 },
+                { name: 'Membresía MOS', sucursal: 'Buenavista', oct: 2000, nov: 1500, dic: 30000, ene: 130000 },
+                // Masaryk
+                { name: 'Liftera C+C', sucursal: 'Masaryk', oct: 35000, nov: 30000, dic: 31000, ene: 30000 },
+                { name: 'Toxina 3Z', sucursal: 'Masaryk', oct: 25000, nov: 37000, dic: 28000, ene: 25000 },
+                { name: 'Farmacia Total', sucursal: 'Masaryk', oct: 39000, nov: 54000, dic: 35000, ene: 37000 },
+                { name: 'Membresía MOS', sucursal: 'Masaryk', oct: 1000, nov: 500, dic: 11000, ene: 43000 }
             ]
         };
 
-        const App = () => {
-            const [activeSucursal, setActiveSucursal] = useState('Todas');
-            const [activeVendedor, setActiveVendedor] = useState('Todas');
-            const [activeMonth, setActiveMonth] = useState('Enero'); 
-            const [activeTab, setActiveTab] = useState('depto');
-            
-            useEffect(() => {
-                if (window.lucide) window.lucide.createIcons();
-            }, [activeSucursal, activeVendedor, activeMonth, activeTab]);
-
-            const formatCurrency = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val);
-
-            const monthKeys = { 'Enero': 'ene', 'Diciembre': 'dic', 'Noviembre': 'nov', 'Octubre': 'oct' };
-            const prevMonthMap = { 'Enero': 'dic', 'Diciembre': 'nov', 'Noviembre': 'oct', 'Octubre': null };
-            const curKey = monthKeys[activeMonth];
-            const preKey = prevMonthMap[activeMonth];
-
-            // Cálculo exhaustivo de KPIs para que coincidan con los listados
-            const stats = useMemo(() => {
-                let current = 0, prev = 0, trans = 0;
-                
-                if (activeVendedor === 'Todas') {
-                    const base = DATA.resumen[activeSucursal];
-                    current = base[curKey];
-                    prev = preKey ? base[preKey] : null;
-                    trans = base[`t_${curKey}`];
-                } else {
-                    const vData = DATA.vendedores.filter(v => v.name === activeVendedor && (activeSucursal === 'Todas' || v.sucursal === activeSucursal));
-                    current = vData.reduce((acc, v) => acc + (v[curKey] || 0), 0);
-                    prev = preKey ? vData.reduce((acc, v) => acc + (v[preKey] || 0), 0) : null;
-                    trans = current > 0 ? Math.ceil(current / 4500) : 0; // Estimado por vendedor
-                }
-
-                return { current, prev, trans, ticket: trans > 0 ? current / trans : 0 };
-            }, [activeSucursal, activeVendedor, activeMonth, curKey, preKey]);
-
-            // Datos de desglose conciliados
-            const breakdown = useMemo(() => {
-                let source = activeTab === 'depto' ? DATA.departamentos : activeTab === 'vendedor' ? DATA.vendedores : DATA.productos;
-                const grouped = {};
-                
-                source.forEach(item => {
-                    const matchSuc = activeSucursal === 'Todas' || item.sucursal === activeSucursal;
-                    // Lógica especial para filtro de vendedora
-                    const matchVend = activeVendedor === 'Todas' || item.vendedor === activeVendedor || item.name === activeVendedor;
-                    
-                    if (matchSuc && matchVend) {
-                        const name = item.name;
-                        if (!grouped[name]) grouped[name] = { name, cur: 0, pre: 0 };
-                        grouped[name].cur += (item[curKey] || 0);
-                        grouped[name].pre += preKey ? (item[preKey] || 0) : 0;
-                    }
-                });
-
-                return Object.values(grouped)
-                    .map(d => ({ 
-                        ...d, 
-                        growth: d.pre > 0 ? ((d.cur - d.pre) / d.pre) * 100 : 0 
-                    }))
-                    .sort((a, b) => b.cur - a.cur);
-            }, [activeSucursal, activeVendedor, activeTab, curKey, preKey]);
-
-            const trendData = useMemo(() => {
-                return DATA.historico.map(h => ({
-                    mes: h.mes.substring(0,3),
-                    valor: activeVendedor === 'Todas' ? h[activeSucursal] : 
-                        DATA.vendedores.filter(v => v.name === activeVendedor && (activeSucursal === 'Todas' || v.sucursal === activeSucursal))
-                        .reduce((acc, v) => acc + (v[monthKeys[h.mes]] || 0), 0)
-                }));
-            }, [activeSucursal, activeVendedor]);
-
-            const maxVal = Math.max(...breakdown.map(d => d.cur), 1);
-
-            return React.createElement('div', { className: 'min-h-screen' }, [
-                
-                // NAVBAR
-                React.createElement('div', { key: 'nav', className: 'sticky top-0 z-50 ios-blur pt-[env(safe-area-inset-top,20px)] border-b border-slate-100' }, [
-                    React.createElement('div', { className: 'px-6 py-4 flex flex-col gap-4' }, [
-                        React.createElement('div', { className: 'flex justify-between items-start' }, [
-                            React.createElement('div', null, [
-                                React.createElement('div', { className: 'mos-logo mb-1' }, 'MOS'),
-                                React.createElement('h1', { className: 'text-xl font-extrabold text-slate-900 tracking-tight' }, 'Reporte de Ventas'),
-                            ]),
-                            React.createElement('div', { className: 'flex bg-slate-50 p-1 rounded-full border border-slate-100 overflow-x-auto no-scrollbar max-w-[145px]' }, 
-                                ['Octubre', 'Noviembre', 'Diciembre', 'Enero'].map(m => React.createElement('button', {
-                                    key: m,
-                                    onClick: () => setActiveMonth(m),
-                                    className: `px-3 py-1.5 rounded-full text-[9px] font-bold transition-all whitespace-nowrap ${activeMonth === m ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`
-                                }, m.substring(0,3)))
-                            )
-                        ]),
-                        
-                        React.createElement('div', { className: 'flex gap-2 overflow-x-auto no-scrollbar' }, 
-                            ['Todas', 'Buenavista', 'Masaryk'].map(s => React.createElement('button', {
-                                key: s,
-                                onClick: () => { setActiveSucursal(s); setActiveVendedor('Todas'); },
-                                className: `flex-none px-4 py-2 rounded-xl text-[10px] font-extrabold transition-all border ${activeSucursal === s ? 'bg-slate-900 border-slate-900 text-white shadow-md' : 'bg-white border-slate-100 text-slate-500'}`
-                            }, s))
-                        ),
-
-                        React.createElement('div', { className: 'flex gap-2 overflow-x-auto no-scrollbar pb-1' }, 
-                            ['Todas', ...new Set(DATA.vendedores.filter(v => v.name !== 'Otros / Ajustes' && (activeSucursal === 'Todas' || v.sucursal === activeSucursal)).map(v => v.name))].map(v => React.createElement('button', {
-                                key: v,
-                                onClick: () => setActiveVendedor(v),
-                                className: `flex-none px-3 py-1.5 rounded-lg text-[9px] font-bold transition-all border ${activeVendedor === v ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-slate-50 border-slate-100 text-slate-400'}`
-                            }, v === 'Todas' ? 'Equipo' : v))
-                        )
-                    ])
-                ]),
-
-                // MAIN
-                React.createElement('main', { key: 'main', className: 'px-6 pt-4 space-y-6 fade-in' }, [
-                    
-                    // KPIs
-                    React.createElement('div', { className: 'grid grid-cols-2 gap-4' }, [
-                        { label: 'Facturación', val: formatCurrency(stats.current), color: 'text-slate-900' },
-                        { label: 'Crecimiento', val: stats.prev !== null ? `${(((stats.current-stats.prev)/stats.prev)*100).toFixed(1)}%` : '-', color: 'text-indigo-600' },
-                        { label: 'Ticket Medio', val: stats.ticket > 0 ? formatCurrency(stats.ticket) : '-', color: 'text-slate-900' },
-                        { label: 'Transacciones', val: stats.trans, color: 'text-slate-900' }
-                    ].map(kpi => React.createElement('div', { key: kpi.label, className: 'card-mos p-5' }, [
-                        React.createElement('p', { className: 'text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1.5' }, kpi.label),
-                        React.createElement('h3', { className: `text-base font-black ${kpi.color} tracking-tight` }, kpi.val)
-                    ]))),
-
-                    // TENDENCIA
-                    React.createElement('div', { className: 'card-mos p-6' }, [
-                        React.createElement('h3', { className: 'text-[9px] font-black text-slate-800 uppercase tracking-[0.2em] mb-6' }, `Evolución Histórica`),
-                        React.createElement('div', { className: 'h-[180px] w-full' }, 
-                            React.createElement(ResponsiveContainer, null, 
-                                React.createElement(AreaChart, { data: trendData }, [
-                                    React.createElement(CartesianGrid, { strokeDasharray: '3 3', vertical: false, stroke: '#F1F5F9' }),
-                                    React.createElement(XAxis, { dataKey: 'mes', axisLine: false, tickLine: false, tick: {fill: '#94A3B8', fontSize: 10} }),
-                                    React.createElement(YAxis, { hide: true }),
-                                    React.createElement(Tooltip, { formatter: v => formatCurrency(v) }),
-                                    React.createElement(Area, { type: 'monotone', dataKey: 'valor', stroke: '#4f46e5', fill: '#4f46e511', strokeWidth: 3 })
-                                ])
-                            )
-                        )
-                    ]),
-
-                    // DETALLE (CUADRADO AL 100%)
-                    React.createElement('div', { className: 'space-y-4 pb-8' }, [
-                        React.createElement('h3', { className: 'text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2' }, 
-                            `Desglose por ${activeTab === 'depto' ? 'Departamento' : activeTab === 'vendedor' ? 'Vendedora' : 'Servicio'}`
-                        ),
-                        breakdown.map((item, i) => React.createElement('div', { key: item.name, className: 'card-mos p-5' }, [
-                            React.createElement('div', { className: 'flex justify-between items-start mb-3' }, [
-                                React.createElement('div', { className: 'flex items-center gap-3' }, [
-                                    React.createElement('span', { className: 'text-xs font-black text-slate-200 italic' }, `0${i+1}`),
-                                    React.createElement('div', null, [
-                                        React.createElement('p', { className: 'text-[11px] font-bold text-slate-900 leading-none' }, item.name),
-                                        stats.prev !== null && React.createElement('p', { className: 'text-[8px] font-bold text-slate-400 mt-1 uppercase' }, `Mes Ant: ${formatCurrency(item.pre)}`)
-                                    ])
-                                ]),
-                                React.createElement('div', { className: 'text-right' }, [
-                                    React.createElement('p', { className: 'text-[11px] font-black text-slate-900' }, formatCurrency(item.cur)),
-                                    stats.prev !== null && React.createElement('div', { className: `flex items-center justify-end gap-1 mt-0.5 ${item.cur >= item.pre ? 'text-emerald-500' : 'text-rose-500'}` }, [
-                                        React.createElement('span', { className: 'text-[9px] font-black' }, `${item.growth > 0 ? '+' : ''}${item.growth.toFixed(0)}%`)
-                                    ])
-                                ])
-                            ]),
-                            React.createElement('div', { className: 'progress-bar-bg' }, 
-                                React.createElement('div', { className: 'progress-bar-fill', style: { width: `${(item.cur / maxVal) * 100}%` } })
-                            )
-                        ]))
-                    ])
-                ]),
-
-                // TAB BAR
-                React.createElement('nav', { key: 'footer-nav', className: 'fixed bottom-0 left-0 right-0 ios-blur border-t border-slate-100 px-10 pt-4 pb-[env(safe-area-inset-bottom,25px)] flex justify-between items-center z-50 shadow-2xl' }, [
-                    { id: 'depto', label: 'Deptos', icon: 'layers' },
-                    { id: 'vendedor', label: 'Vendedoras', icon: 'users' },
-                    { id: 'producto', label: 'Servicios', icon: 'star' }
-                ].map(tab => {
-                    const isActive = activeTab === tab.id;
-                    return React.createElement('button', {
-                        key: tab.id,
-                        onClick: () => setActiveTab(tab.id),
-                        className: `relative flex flex-col items-center gap-1.5 transition-all ${isActive ? 'text-indigo-600' : 'text-slate-300'}`
-                    }, [
-                        React.createElement('i', { 'data-lucide': tab.icon, size: 20, className: isActive ? 'stroke-[2.5px]' : 'stroke-[2px]' }),
-                        React.createElement('span', { className: 'text-[8px] font-black uppercase tracking-widest' }, tab.label),
-                        isActive && React.createElement('div', { className: 'active-tab-indicator' })
-                    ])
-                }))
-            ]);
+        // Estado
+        let state = {
+            mes: 'ene',
+            sucursal: 'Todas',
+            tab: 'departamentos',
+            analisisTipo: 'departamento',
+            analisisItem: null
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(React.createElement(App));
+        // Renderizar
+        function render() {
+            renderMonthFilters();
+            renderSucursalFilters();
+            renderKPIs();
+            renderEvolutionChart();
+            renderTabs();
+            if (state.tab === 'analisis') {
+                renderAnalisis();
+            } else {
+                renderBreakdown();
+            }
+        }
+
+        function renderMonthFilters() {
+            const months = [
+                { key: 'oct', label: 'Octubre' },
+                { key: 'nov', label: 'Noviembre' },
+                { key: 'dic', label: 'Diciembre' },
+                { key: 'ene', label: 'Enero' }
+            ];
+            
+            document.getElementById('monthFilters').innerHTML = months.map(m => 
+                `<button class="btn ${state.mes === m.key ? 'active' : ''}" onclick="changeMes('${m.key}')">${m.label}</button>`
+            ).join('');
+        }
+
+        function renderSucursalFilters() {
+            const sucursales = ['Todas', 'Buenavista', 'Masaryk'];
+            
+            document.getElementById('sucursalFilters').innerHTML = sucursales.map(s => 
+                `<button class="btn ${state.sucursal === s ? 'active' : ''}" onclick="changeSucursal('${s}')">${s}</button>`
+            ).join('');
+        }
+
+        function renderKPIs() {
+            const current = DATA.resumen[state.sucursal][state.mes];
+            const prevMonths = { ene: 'dic', dic: 'nov', nov: 'oct', oct: null };
+            const prevKey = prevMonths[state.mes];
+            const prev = prevKey ? DATA.resumen[state.sucursal][prevKey] : null;
+            const growth = prev ? ((current - prev) / prev * 100) : 0;
+            
+            // Calcular transacciones estimadas (facturación / ticket promedio)
+            const avgTicket = 5800; // Ticket promedio estimado
+            const transactions = Math.round(current / avgTicket);
+            
+            const kpis = [
+                { label: 'Facturación', value: formatCurrency(current) },
+                { label: 'Crecimiento', value: formatPercent(growth), growth: growth },
+                { label: 'Ticket Medio', value: formatCurrency(avgTicket) },
+                { label: 'Transacciones', value: transactions.toString() }
+            ];
+            
+            document.getElementById('kpis').innerHTML = kpis.map(kpi => `
+                <div class="kpi-card">
+                    <div class="kpi-label">${kpi.label}</div>
+                    <div class="kpi-value">${kpi.value}</div>
+                    ${kpi.growth !== undefined ? `<div class="kpi-growth ${kpi.growth >= 0 ? 'positive' : 'negative'}">
+                        ${kpi.growth >= 0 ? '↑' : '↓'} ${Math.abs(kpi.growth).toFixed(1)}%
+                    </div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function renderEvolutionChart() {
+            const container = document.getElementById('evolutionChart');
+            const data = DATA.resumen[state.sucursal];
+            
+            // Datos
+            const months = ['oct', 'nov', 'dic', 'ene'];
+            const labels = ['Oct', 'Nov', 'Dic', 'Ene'];
+            const values = months.map(m => data[m]);
+            
+            // Dimensiones - MÁS ESPACIO
+            const width = container.offsetWidth;
+            const height = 350;
+            const padding = { top: 50, right: 30, bottom: 80, left: 80 };
+            const chartWidth = width - padding.left - padding.right;
+            const chartHeight = height - padding.top - padding.bottom;
+            
+            // Escalas
+            const maxValue = Math.max(...values);
+            const minValue = Math.min(...values) * 0.85;
+            const valueRange = maxValue - minValue;
+            
+            // Calcular puntos
+            const points = values.map((value, i) => {
+                const x = padding.left + (chartWidth / (values.length - 1)) * i;
+                const y = padding.top + chartHeight - ((value - minValue) / valueRange) * chartHeight;
+                return { x, y, value };
+            });
+            
+            // Crear path para la línea
+            const linePath = points.map((p, i) => 
+                `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`
+            ).join(' ');
+            
+            // Crear path para el área
+            const areaPath = `M ${points[0].x} ${height - padding.bottom} L ${linePath.substring(2)} L ${points[points.length - 1].x} ${height - padding.bottom} Z`;
+            
+            // Renderizar SVG
+            container.innerHTML = `
+                <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display: block;">
+                    <!-- Grid lines -->
+                    ${[0, 1, 2, 3, 4].map(i => {
+                        const y = padding.top + (chartHeight / 4) * i;
+                        const value = maxValue - (valueRange / 4) * i;
+                        return `
+                            <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" 
+                                  stroke="#f5f5f7" stroke-width="1"/>
+                            <text x="${padding.left - 10}" y="${y + 4}" 
+                                  text-anchor="end" font-size="13" fill="#86868b" font-family="-apple-system, system-ui, sans-serif">
+                                $${Math.round(value / 1000)}K
+                            </text>
+                        `;
+                    }).join('')}
+                    
+                    <!-- Área bajo la curva -->
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#007aff;stop-opacity:0.4" />
+                            <stop offset="100%" style="stop-color:#007aff;stop-opacity:0" />
+                        </linearGradient>
+                    </defs>
+                    <path d="${areaPath}" fill="url(#gradient)" opacity="0.3"/>
+                    
+                    <!-- Línea principal -->
+                    <path d="${linePath}" fill="none" stroke="#007aff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+                    
+                    <!-- Puntos y etiquetas -->
+                    ${points.map((point, i) => {
+                        const isCurrentMonth = months[i] === state.mes;
+                        return `
+                            <!-- Resaltar mes actual -->
+                            ${isCurrentMonth ? `
+                                <circle cx="${point.x}" cy="${point.y}" r="12" 
+                                        fill="none" stroke="#007aff" stroke-width="6" opacity="0.2"/>
+                            ` : ''}
+                            
+                            <!-- Punto -->
+                            <circle cx="${point.x}" cy="${point.y}" r="6" fill="white" stroke="#007aff" stroke-width="3"/>
+                            <circle cx="${point.x}" cy="${point.y}" r="2.5" fill="#007aff"/>
+                            
+                            <!-- Valor arriba -->
+                            <text x="${point.x}" y="${point.y - 15}" 
+                                  text-anchor="middle" font-size="15" font-weight="${isCurrentMonth ? 'bold' : 'normal'}"
+                                  fill="${isCurrentMonth ? '#007aff' : '#1d1d1f'}" font-family="-apple-system, system-ui, sans-serif">
+                                $${Math.round(point.value / 1000)}K
+                            </text>
+                            
+                            <!-- Mes abajo -->
+                            <text x="${point.x}" y="${height - padding.bottom + 30}" 
+                                  text-anchor="middle" font-size="17" font-weight="bold" fill="#1d1d1f" font-family="-apple-system, system-ui, sans-serif">
+                                ${labels[i]}
+                            </text>
+                        `;
+                    }).join('')}
+                </svg>
+            `;
+        }
+
+        function renderTabs() {
+            const tabs = [
+                { key: 'departamentos', label: 'Departamentos' },
+                { key: 'vendedoras', label: 'Vendedoras' },
+                { key: 'servicios', label: 'Servicios' },
+                { key: 'analisis', label: 'Análisis' }
+            ];
+            
+            document.getElementById('tabs').innerHTML = tabs.map(t => 
+                `<div class="tab ${state.tab === t.key ? 'active' : ''}" onclick="changeTab('${t.key}')">${t.label}</div>`
+            ).join('');
+        }
+
+        function renderBreakdown() {
+            let items = DATA[state.tab];
+            
+            // Filtrar por sucursal si aplica (vendedoras tienen la propiedad sucursal)
+            if (state.sucursal !== 'Todas' && items[0].sucursal !== undefined) {
+                items = items.filter(item => item.sucursal === state.sucursal);
+            }
+            
+            // Si no hay items después del filtro, mostrar mensaje
+            if (items.length === 0) {
+                document.getElementById('breakdown').innerHTML = '<div style="padding: 20px; text-align: center; color: #86868b;">No hay datos para esta sucursal</div>';
+                return;
+            }
+            
+            const maxValue = Math.max(...items.map(i => i[state.mes]));
+            
+            document.getElementById('breakdown').innerHTML = items
+                .sort((a, b) => b[state.mes] - a[state.mes])
+                .map(item => {
+                    const value = item[state.mes];
+                    const percent = (value / maxValue) * 100;
+                    return `
+                        <div class="breakdown-item">
+                            <div class="breakdown-header">
+                                <div class="breakdown-name">${item.name}</div>
+                                <div class="breakdown-value">${formatCurrency(value)}</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percent}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+        }
+
+        function renderAnalisis() {
+            // Obtener opciones según el tipo
+            const getOptions = () => {
+                let allItems = [];
+                if (state.analisisTipo === 'departamento') {
+                    allItems = DATA.departamentos;
+                } else if (state.analisisTipo === 'vendedora') {
+                    allItems = DATA.vendedoras;
+                } else {
+                    allItems = DATA.servicios;
+                }
+                
+                // Eliminar duplicados por nombre
+                const uniqueNames = [...new Set(allItems.map(i => i.name))];
+                return uniqueNames;
+            };
+            
+            const options = getOptions();
+            
+            // Si no hay item seleccionado, seleccionar el primero
+            if (!state.analisisItem || !options.includes(state.analisisItem)) {
+                state.analisisItem = options[0];
+            }
+            
+            // Obtener datos del item seleccionado (sumar si hay múltiples sucursales)
+            const getItemData = () => {
+                let allItems = [];
+                if (state.analisisTipo === 'departamento') {
+                    allItems = DATA.departamentos.filter(d => d.name === state.analisisItem);
+                } else if (state.analisisTipo === 'vendedora') {
+                    allItems = DATA.vendedoras.filter(v => v.name === state.analisisItem);
+                } else {
+                    allItems = DATA.servicios.filter(s => s.name === state.analisisItem);
+                }
+                
+                // Sumar valores de todas las sucursales
+                return {
+                    oct: allItems.reduce((sum, item) => sum + item.oct, 0),
+                    nov: allItems.reduce((sum, item) => sum + item.nov, 0),
+                    dic: allItems.reduce((sum, item) => sum + item.dic, 0),
+                    ene: allItems.reduce((sum, item) => sum + item.ene, 0)
+                };
+            };
+            
+            const itemData = getItemData();
+            const valores = [itemData.oct, itemData.nov, itemData.dic, itemData.ene];
+            const promedio = valores.reduce((a, b) => a + b, 0) / valores.length;
+            const maxValor = Math.max(...valores);
+            const minValor = Math.min(...valores);
+            const maxMes = ['Octubre', 'Noviembre', 'Diciembre', 'Enero'][valores.indexOf(maxValor)];
+            const minMes = ['Octubre', 'Noviembre', 'Diciembre', 'Enero'][valores.indexOf(minValor)];
+            const tendencia = ((itemData.ene - itemData.oct) / itemData.oct) * 100;
+            
+            document.getElementById('breakdown').innerHTML = `
+                <div style="padding: 20px;">
+                    <!-- Selector de Tipo -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 13px; font-weight: 600; color: #86868b; margin-bottom: 8px;">TIPO DE ANÁLISIS</div>
+                        <div style="display: flex; gap: 15px;">
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="analisisTipo" value="departamento" ${state.analisisTipo === 'departamento' ? 'checked' : ''} 
+                                       onchange="state.analisisTipo = 'departamento'; state.analisisItem = null; render();" 
+                                       style="width: 18px; height: 18px; accent-color: #007aff;">
+                                <span style="font-size: 15px; color: #1d1d1f;">Departamento</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="analisisTipo" value="vendedora" ${state.analisisTipo === 'vendedora' ? 'checked' : ''} 
+                                       onchange="state.analisisTipo = 'vendedora'; state.analisisItem = null; render();" 
+                                       style="width: 18px; height: 18px; accent-color: #007aff;">
+                                <span style="font-size: 15px; color: #1d1d1f;">Vendedora</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="analisisTipo" value="servicio" ${state.analisisTipo === 'servicio' ? 'checked' : ''} 
+                                       onchange="state.analisisTipo = 'servicio'; state.analisisItem = null; render();" 
+                                       style="width: 18px; height: 18px; accent-color: #007aff;">
+                                <span style="font-size: 15px; color: #1d1d1f;">Servicio</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Selector de Item -->
+                    <div style="margin-bottom: 30px;">
+                        <div style="font-size: 13px; font-weight: 600; color: #86868b; margin-bottom: 8px;">SELECCIONAR</div>
+                        <select onchange="state.analisisItem = this.value; render();" 
+                                style="width: 100%; padding: 12px; font-size: 17px; border: 1px solid #d1d1d6; border-radius: 10px; background: white; font-family: -apple-system, system-ui, sans-serif;">
+                            ${options.map(opt => `<option value="${opt}" ${opt === state.analisisItem ? 'selected' : ''}>${opt}</option>`).join('')}
+                        </select>
+                    </div>
+                    
+                    <!-- Gráfica de Evolución -->
+                    <div style="background: #f5f5f7; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                        <div style="font-size: 15px; font-weight: 600; color: #1d1d1f; margin-bottom: 15px;">Evolución Mensual</div>
+                        <div id="analisis-chart"></div>
+                    </div>
+                    
+                    <!-- Métricas -->
+                    <div style="background: #f5f5f7; border-radius: 12px; padding: 20px;">
+                        <div style="font-size: 15px; font-weight: 600; color: #1d1d1f; margin-bottom: 15px;">📊 Métricas</div>
+                        <div style="display: grid; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #86868b;">Promedio:</span>
+                                <span style="font-weight: 600; color: #1d1d1f;">${formatCurrency(promedio)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #86868b;">Mejor mes:</span>
+                                <span style="font-weight: 600; color: #34c759;">${maxMes} (${formatCurrency(maxValor)})</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #86868b;">Peor mes:</span>
+                                <span style="font-weight: 600; color: #ff3b30;">${minMes} (${formatCurrency(minValor)})</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #86868b;">Tendencia Oct-Ene:</span>
+                                <span style="font-weight: 600; color: ${tendencia >= 0 ? '#34c759' : '#ff3b30'};">
+                                    ${tendencia >= 0 ? '↑' : '↓'} ${Math.abs(tendencia).toFixed(1)}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Renderizar gráfica específica
+            renderAnalisisChart(itemData);
+        }
+        
+        function renderAnalisisChart(data) {
+            const container = document.getElementById('analisis-chart');
+            if (!container) return;
+            
+            const width = container.offsetWidth || 300;
+            const height = 250;
+            const padding = { top: 40, right: 30, bottom: 60, left: 60 };
+            
+            const valores = [data.oct, data.nov, data.dic, data.ene];
+            const labels = ['Oct', 'Nov', 'Dic', 'Ene'];
+            
+            const maxValue = Math.max(...valores);
+            const minValue = Math.min(...valores);
+            const range = maxValue - minValue;
+            const yMax = maxValue + (range * 0.2);
+            const yMin = Math.max(0, minValue - (range * 0.2));
+            
+            const chartWidth = width - padding.left - padding.right;
+            const chartHeight = height - padding.top - padding.bottom;
+            
+            const points = valores.map((val, i) => ({
+                x: padding.left + (i * chartWidth / 3),
+                y: padding.top + chartHeight - ((val - yMin) / (yMax - yMin)) * chartHeight,
+                value: val
+            }));
+            
+            const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+            
+            const areaPathData = `${pathData} L ${points[points.length - 1].x} ${height - padding.bottom} L ${points[0].x} ${height - padding.bottom} Z`;
+            
+            container.innerHTML = `
+                <svg width="${width}" height="${height}" style="display: block;" viewBox="0 0 ${width} ${height}">
+                    <defs>
+                        <linearGradient id="analisis-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#007aff;stop-opacity:0.3" />
+                            <stop offset="100%" style="stop-color:#007aff;stop-opacity:0.05" />
+                        </linearGradient>
+                    </defs>
+                    
+                    <!-- Líneas de grid -->
+                    ${[0, 0.25, 0.5, 0.75, 1].map(ratio => {
+                        const y = padding.top + chartHeight * (1 - ratio);
+                        const value = yMin + (yMax - yMin) * ratio;
+                        return `
+                            <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" 
+                                  stroke="#e5e5ea" stroke-width="1"/>
+                            <text x="${padding.left - 10}" y="${y + 5}" text-anchor="end" 
+                                  font-size="12" fill="#86868b" font-family="-apple-system, system-ui, sans-serif">
+                                $${Math.round(value / 1000)}K
+                            </text>
+                        `;
+                    }).join('')}
+                    
+                    <!-- Área bajo la línea -->
+                    <path d="${areaPathData}" fill="url(#analisis-gradient)"/>
+                    
+                    <!-- Línea -->
+                    <path d="${pathData}" fill="none" stroke="#007aff" stroke-width="3" 
+                          stroke-linejoin="round" stroke-linecap="round"/>
+                    
+                    <!-- Puntos y etiquetas -->
+                    ${points.map((point, i) => `
+                        <circle cx="${point.x}" cy="${point.y}" r="5" fill="white" stroke="#007aff" stroke-width="2"/>
+                        <circle cx="${point.x}" cy="${point.y}" r="2.5" fill="#007aff"/>
+                        
+                        <!-- Valor arriba -->
+                        <text x="${point.x}" y="${point.y - 15}" 
+                              text-anchor="middle" font-size="14" font-weight="600"
+                              fill="#1d1d1f" font-family="-apple-system, system-ui, sans-serif">
+                            $${Math.round(point.value / 1000)}K
+                        </text>
+                        
+                        <!-- Mes abajo -->
+                        <text x="${point.x}" y="${height - padding.bottom + 25}" 
+                              text-anchor="middle" font-size="15" font-weight="bold" fill="#1d1d1f" font-family="-apple-system, system-ui, sans-serif">
+                            ${labels[i]}
+                        </text>
+                    `).join('')}
+                </svg>
+            `;
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0 }).format(value);
+        }
+
+        function formatPercent(value) {
+            return (value >= 0 ? '+' : '') + value.toFixed(1) + '%';
+        }
+
+        function changeMes(mes) {
+            state.mes = mes;
+            render();
+        }
+
+        function changeSucursal(sucursal) {
+            state.sucursal = sucursal;
+            render();
+        }
+
+        function changeTab(tab) {
+            state.tab = tab;
+            render();
+        }
+
+        // Inicializar
+        render();
     </script>
 </body>
 </html>
