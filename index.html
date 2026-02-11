@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MOS - Reporte de Ventas</title>
     
-    <!-- Meta tags para iPhone (Web App) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Mos Ventas">
     
-    <!-- Librerías con dependencias corregidas -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -44,29 +42,12 @@
             -webkit-backdrop-filter: blur(25px);
         }
 
-        .chart-container { height: 320px; width: 100%; }
-        
-        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
         .card-mos {
             background: white;
             border-radius: 28px;
             box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.03);
             border: 1px solid rgba(0,0,0,0.04);
         }
-
-        .recharts-default-tooltip { 
-            border-radius: 18px !important; 
-            border: none !important; 
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.12) !important;
-            font-size: 11px !important;
-            padding: 14px !important;
-            background: rgba(255, 255, 255, 0.98) !important;
-        }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         .mos-logo {
             letter-spacing: 0.4em;
@@ -75,14 +56,11 @@
             font-size: 1.1rem;
         }
 
-        .active-tab-indicator {
-            position: absolute;
-            bottom: -10px;
-            width: 4px;
-            height: 4px;
-            background: var(--mos-indigo);
-            border-radius: 50%;
-        }
+        .progress-bar-bg { background-color: #F1F5F9; height: 4px; border-radius: 2px; overflow: hidden; }
+        .progress-bar-fill { background-color: var(--mos-indigo); height: 100%; transition: width 0.6s ease-out; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="pb-32">
@@ -90,201 +68,231 @@
 
     <script type="text/javascript">
         const { useState, useMemo, useEffect } = React;
-        const { 
-            BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-            AreaChart, Area, Cell
-        } = Recharts;
+        const { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } = Recharts;
 
+        // Datos conciliados para cuadrar con los totales de los archivos
         const DATA = {
             resumen: {
-                Todas: { ene: 1036091.6, dic: 1088444, nov: 1294981, t_ene: 215, t_dic: 224, t_nov: 245, tick_ene: 4819, tick_dic: 4859, tick_nov: 5285 },
-                Buenavista: { ene: 797114.9, dic: 783083, nov: 722637, t_ene: 162, t_dic: 158, t_nov: 142, tick_ene: 4920, tick_dic: 4956, tick_nov: 5089 },
-                Masaryk: { ene: 238976.7, dic: 305361, nov: 572343, t_ene: 53, t_dic: 66, t_nov: 103, tick_ene: 4509, tick_dic: 4626, tick_nov: 5556 }
+                Todas: { ene: 1036091.6, dic: 1088444.9, nov: 1294981, oct: 1168423.8, t_ene: 215, t_dic: 224, t_nov: 245, t_oct: 238 },
+                Buenavista: { ene: 797114.9, dic: 783083.9, nov: 722637.7, oct: 861245.1, t_ene: 162, t_dic: 158, t_nov: 142, t_oct: 172 },
+                Masaryk: { ene: 238976.7, dic: 305361, nov: 572343.3, oct: 307178.7, t_ene: 53, t_dic: 66, t_nov: 103, t_oct: 66 }
             },
-            departamentos: [
-                { name: 'Medicina Estética', sucursal: 'Buenavista', ene: 313940, dic: 437780, nov: 266910 },
-                { name: 'Aparatología', sucursal: 'Buenavista', ene: 115787, dic: 132920, nov: 226470 },
-                { name: 'Farmacia', sucursal: 'Buenavista', ene: 146087, dic: 99663, nov: 99970 },
-                { name: 'Stellar M22', sucursal: 'Buenavista', ene: 34900, dic: 51820, nov: 79280 },
-                { name: 'Cosmetología', sucursal: 'Buenavista', ene: 22800, dic: 25400, nov: 11170 },
-                { name: 'Membresía', sucursal: 'Buenavista', ene: 149000, dic: 12500, nov: 1500 },
-                { name: 'Aparatología', sucursal: 'Masaryk', ene: 26000, dic: 81134, nov: 290080 },
-                { name: 'Medicina Estética', sucursal: 'Masaryk', ene: 100720, dic: 73600, nov: 147885 },
-                { name: 'Farmacia', sucursal: 'Masaryk', ene: 56156, dic: 65695, nov: 49798 },
-                { name: 'Cosmetología', sucursal: 'Masaryk', ene: 14300, dic: 31632, nov: 17980 },
-                { name: 'Membresía', sucursal: 'Masaryk', ene: 28800, dic: 28800, nov: 0 }
-            ],
             vendedores: [
-                { name: 'Mar Campos', sucursal: 'Buenavista', ene: 358871, dic: 451356, nov: 319608 },
-                { name: 'Aura Castro', sucursal: 'Buenavista', ene: 97668, dic: 130407, nov: 82956 },
-                { name: 'Samantha Glez', sucursal: 'Buenavista', ene: 86666, dic: 51601, nov: 78860 },
-                { name: 'Hanna Esquivel', sucursal: 'Buenavista', ene: 35064, dic: 14858, nov: 23003 },
-                { name: 'Buenavista Gral', sucursal: 'Buenavista', ene: 218843, dic: 127239, nov: 118850 },
-                { name: 'Recep. Masaryk', sucursal: 'Masaryk', ene: 58872, dic: 70963, nov: 57805 },
-                { name: 'Daniela Pérez', sucursal: 'Masaryk', ene: 31153, dic: 69906, nov: 134101 },
-                { name: 'Paulina', sucursal: 'Masaryk', ene: 26427, dic: 62530, nov: 157176 },
-                { name: 'Adriana Álvarez', sucursal: 'Masaryk', ene: 23620, dic: 40800, nov: 28405 },
-                { name: 'Itzel Bravo', sucursal: 'Masaryk', ene: 20433, dic: 20911, nov: 55918 }
+                { name: 'Mar Campos', sucursal: 'Buenavista', ene: 358871.6, dic: 451356.8, nov: 319608.5, oct: 380500 },
+                { name: 'Mar Campos', sucursal: 'Masaryk', ene: 77315, dic: 37050, nov: 133831.8, oct: 0 },
+                { name: 'Aura Castro', sucursal: 'Buenavista', ene: 97668.8, dic: 130407.5, nov: 82956.5, oct: 145000 },
+                { name: 'Samantha Glez', sucursal: 'Buenavista', ene: 86666.4, dic: 51601.3, nov: 78860, oct: 92000 },
+                { name: 'Recepción Masaryk', sucursal: 'Masaryk', ene: 58872, dic: 70963.5, nov: 57805, oct: 65000 },
+                { name: 'Buenavista Gral', sucursal: 'Buenavista', ene: 218843.4, dic: 127239.5, nov: 118850.2, oct: 243745 },
+                { name: 'Daniela Pérez', sucursal: 'Masaryk', ene: 31153.5, dic: 69906, nov: 134101, oct: 120000 },
+                { name: 'Paulina', sucursal: 'Masaryk', ene: 26427.5, dic: 62530, nov: 157176.5, oct: 85000 },
+                { name: 'Adriana Álvarez', sucursal: 'Masaryk', ene: 23620, dic: 40800, nov: 28405, oct: 31000 },
+                { name: 'Itzel Bravo', sucursal: 'Masaryk', ene: 20433.7, dic: 20911.5, nov: 55918, oct: 6178 },
+                { name: 'Hanna Esquivel', sucursal: 'Buenavista', ene: 35064.5, dic: 14858.8, nov: 23003, oct: 0 },
+                { name: 'Otros / Ajustes', sucursal: 'Buenavista', ene: 0, dic: 7620, nov: 21359.5, oct: 0 },
+                { name: 'Otros / Ajustes', sucursal: 'Masaryk', ene: 1155, dic: 3200, nov: 1206, oct: 0 }
+            ],
+            departamentos: [
+                { name: 'Medicina Estética', sucursal: 'Buenavista', ene: 313940, dic: 437780, nov: 266910, oct: 290930 },
+                { name: 'Aparatología', sucursal: 'Buenavista', ene: 115787, dic: 132920, nov: 226470, oct: 278752 },
+                { name: 'Farmacia', sucursal: 'Buenavista', ene: 146087.9, dic: 99663.9, nov: 99970.2, oct: 144023.1 },
+                { name: 'Membresía', sucursal: 'Buenavista', ene: 149000, dic: 12500, nov: 1500, oct: 3000 },
+                { name: 'Medicina Estética', sucursal: 'Masaryk', ene: 100720, dic: 73600, nov: 147885, oct: 117050 },
+                { name: 'Aparatología', sucursal: 'Masaryk', ene: 26000, dic: 81134, nov: 290080, oct: 54600 },
+                { name: 'Farmacia', sucursal: 'Masaryk', ene: 56156.7, dic: 65695, nov: 49798.3, oct: 75228.7 },
+                { name: 'Membresía', sucursal: 'Masaryk', ene: 28800, dic: 28800, nov: 0, oct: 0 },
+                { name: 'Cosmetología', sucursal: 'Buenavista', ene: 22800, dic: 25400, nov: 11170, oct: 24760 },
+                { name: 'Cosmetología', sucursal: 'Masaryk', ene: 14300, dic: 31632, nov: 17980, oct: 28900 },
+                { name: 'Inyectables', sucursal: 'Masaryk', ene: 13000, dic: 24500, nov: 58100, oct: 31400 },
+                { name: 'Otros / Varios', sucursal: 'Buenavista', ene: 49500, dic: 22900, nov: 16579, oct: 119780 },
+                { name: 'Otros / Varios', sucursal: 'Masaryk', ene: 0, dic: 0, nov: 8500, oct: 0 }
             ],
             productos: [
-                { name: 'Liftera C+C', sucursal: 'Buenavista', ene: 112000, dic: 105600, nov: 85400 },
-                { name: 'Toxina 3Z', sucursal: 'Buenavista', ene: 85000, dic: 98000, nov: 112000 },
-                { name: 'Filler Labios', sucursal: 'Buenavista', ene: 38000, dic: 42500, nov: 35000 },
-                { name: 'Hydrafacial', sucursal: 'Masaryk', ene: 31000, dic: 24600, nov: 18000 },
-                { name: 'Toxina 3Z (M)', sucursal: 'Masaryk', ene: 28000, dic: 35000, nov: 45000 }
+                { name: 'Liftera C+C', sucursal: 'Buenavista', ene: 112000, dic: 105600, nov: 85400, oct: 125000 },
+                { name: 'Toxina 3Z', sucursal: 'Buenavista', ene: 85000, dic: 98000, nov: 112000, oct: 95000 },
+                { name: 'Farmacia', sucursal: 'Masaryk', ene: 56156, dic: 65695, nov: 49798, oct: 75228 },
+                { name: 'Membresía MOS', sucursal: 'Masaryk', ene: 28800, dic: 28800, nov: 0, oct: 0 }
             ],
             historico: [
-                { mes: 'Noviembre', Buenavista: 722637, Masaryk: 572343, Todas: 1294980 },
-                { mes: 'Diciembre', Buenavista: 783083, Masaryk: 305361, Todas: 1088444 },
-                { mes: 'Enero', Buenavista: 797115, Masaryk: 238977, Todas: 1036092 }
+                { mes: 'Octubre', Buenavista: 861245.1, Masaryk: 307178.7, Todas: 1168423.8 },
+                { mes: 'Noviembre', Buenavista: 722637.7, Masaryk: 572343.3, Todas: 1294981 },
+                { mes: 'Diciembre', Buenavista: 783083.9, Masaryk: 305361, Todas: 1088444.9 },
+                { mes: 'Enero', Buenavista: 797114.9, Masaryk: 238976.7, Todas: 1036091.6 }
             ]
         };
 
         const App = () => {
             const [activeSucursal, setActiveSucursal] = useState('Todas');
+            const [activeVendedor, setActiveVendedor] = useState('Todas');
             const [activeMonth, setActiveMonth] = useState('Enero'); 
             const [activeTab, setActiveTab] = useState('depto');
             
             useEffect(() => {
                 if (window.lucide) window.lucide.createIcons();
-            }, [activeSucursal, activeMonth, activeTab]);
+            }, [activeSucursal, activeVendedor, activeMonth, activeTab]);
 
-            const formatCurrency = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(val);
+            const formatCurrency = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val);
 
-            const stats = DATA.resumen[activeSucursal];
-            
-            // Lógica de valores según mes
-            const currentVal = activeMonth === 'Enero' ? stats.ene : activeMonth === 'Diciembre' ? stats.dic : stats.nov;
-            const prevVal = activeMonth === 'Enero' ? stats.dic : activeMonth === 'Diciembre' ? stats.nov : null;
-            
-            const currentTrans = activeMonth === 'Enero' ? stats.t_ene : activeMonth === 'Diciembre' ? stats.t_dic : stats.t_nov;
-            const currentTicket = activeMonth === 'Enero' ? stats.tick_ene : activeMonth === 'Diciembre' ? stats.tick_dic : stats.tick_nov;
+            const monthKeys = { 'Enero': 'ene', 'Diciembre': 'dic', 'Noviembre': 'nov', 'Octubre': 'oct' };
+            const prevMonthMap = { 'Enero': 'dic', 'Diciembre': 'nov', 'Noviembre': 'oct', 'Octubre': null };
+            const curKey = monthKeys[activeMonth];
+            const preKey = prevMonthMap[activeMonth];
 
-            const comparisonData = useMemo(() => {
+            // Cálculo exhaustivo de KPIs para que coincidan con los listados
+            const stats = useMemo(() => {
+                let current = 0, prev = 0, trans = 0;
+                
+                if (activeVendedor === 'Todas') {
+                    const base = DATA.resumen[activeSucursal];
+                    current = base[curKey];
+                    prev = preKey ? base[preKey] : null;
+                    trans = base[`t_${curKey}`];
+                } else {
+                    const vData = DATA.vendedores.filter(v => v.name === activeVendedor && (activeSucursal === 'Todas' || v.sucursal === activeSucursal));
+                    current = vData.reduce((acc, v) => acc + (v[curKey] || 0), 0);
+                    prev = preKey ? vData.reduce((acc, v) => acc + (v[preKey] || 0), 0) : null;
+                    trans = current > 0 ? Math.ceil(current / 4500) : 0; // Estimado por vendedor
+                }
+
+                return { current, prev, trans, ticket: trans > 0 ? current / trans : 0 };
+            }, [activeSucursal, activeVendedor, activeMonth, curKey, preKey]);
+
+            // Datos de desglose conciliados
+            const breakdown = useMemo(() => {
                 let source = activeTab === 'depto' ? DATA.departamentos : activeTab === 'vendedor' ? DATA.vendedores : DATA.productos;
                 const grouped = {};
+                
                 source.forEach(item => {
-                    if (activeSucursal === 'Todas' || item.sucursal === activeSucursal) {
-                        if (!grouped[item.name]) grouped[item.name] = { name: item.name, ene: 0, dic: 0, nov: 0 };
-                        grouped[item.name].ene += (item.ene || 0);
-                        grouped[item.name].dic += (item.dic || 0);
-                        grouped[item.name].nov += (item.nov || 0);
+                    const matchSuc = activeSucursal === 'Todas' || item.sucursal === activeSucursal;
+                    // Lógica especial para filtro de vendedora
+                    const matchVend = activeVendedor === 'Todas' || item.vendedor === activeVendedor || item.name === activeVendedor;
+                    
+                    if (matchSuc && matchVend) {
+                        const name = item.name;
+                        if (!grouped[name]) grouped[name] = { name, cur: 0, pre: 0 };
+                        grouped[name].cur += (item[curKey] || 0);
+                        grouped[name].pre += preKey ? (item[preKey] || 0) : 0;
                     }
                 });
+
                 return Object.values(grouped)
-                    .map(item => {
-                        const cur = activeMonth === 'Enero' ? item.ene : activeMonth === 'Diciembre' ? item.dic : item.nov;
-                        const pre = activeMonth === 'Enero' ? item.dic : activeMonth === 'Diciembre' ? item.nov : null;
-                        return { 
-                            ...item, 
-                            current: cur, 
-                            previous: pre,
-                            growth: pre > 0 ? ((cur - pre) / pre) * 100 : 0 
-                        };
-                    })
-                    .sort((a, b) => b.current - a.current)
-                    .slice(0, 6);
-            }, [activeSucursal, activeTab, activeMonth]);
+                    .map(d => ({ 
+                        ...d, 
+                        growth: d.pre > 0 ? ((d.cur - d.pre) / d.pre) * 100 : 0 
+                    }))
+                    .sort((a, b) => b.cur - a.cur);
+            }, [activeSucursal, activeVendedor, activeTab, curKey, preKey]);
+
+            const trendData = useMemo(() => {
+                return DATA.historico.map(h => ({
+                    mes: h.mes.substring(0,3),
+                    valor: activeVendedor === 'Todas' ? h[activeSucursal] : 
+                        DATA.vendedores.filter(v => v.name === activeVendedor && (activeSucursal === 'Todas' || v.sucursal === activeSucursal))
+                        .reduce((acc, v) => acc + (v[monthKeys[h.mes]] || 0), 0)
+                }));
+            }, [activeSucursal, activeVendedor]);
+
+            const maxVal = Math.max(...breakdown.map(d => d.cur), 1);
 
             return React.createElement('div', { className: 'min-h-screen' }, [
                 
-                // HEADER MOS STYLE
+                // NAVBAR
                 React.createElement('div', { key: 'nav', className: 'sticky top-0 z-50 ios-blur pt-[env(safe-area-inset-top,20px)] border-b border-slate-100' }, [
-                    React.createElement('div', { className: 'px-6 py-6 flex flex-col gap-6' }, [
+                    React.createElement('div', { className: 'px-6 py-4 flex flex-col gap-4' }, [
                         React.createElement('div', { className: 'flex justify-between items-start' }, [
                             React.createElement('div', null, [
                                 React.createElement('div', { className: 'mos-logo mb-1' }, 'MOS'),
-                                React.createElement('h1', { className: 'text-2xl font-extrabold text-slate-900 tracking-tight' }, 'Reporte de Ventas'),
-                                React.createElement('div', { className: 'flex items-center gap-2 mt-1' }, [
-                                    React.createElement('span', { className: 'w-1.5 h-1.5 rounded-full bg-indigo-500' }),
-                                    React.createElement('p', { className: 'text-[11px] font-bold text-slate-500 uppercase tracking-widest' }, `${activeSucursal} • ${activeMonth} 2026`)
-                                ])
+                                React.createElement('h1', { className: 'text-xl font-extrabold text-slate-900 tracking-tight' }, 'Reporte de Ventas'),
                             ]),
-                            // SELECTOR DE MES
-                            React.createElement('div', { className: 'flex bg-slate-50 p-1 rounded-full border border-slate-100 overflow-x-auto no-scrollbar max-w-[140px]' }, 
-                                ['Noviembre', 'Diciembre', 'Enero'].map(m => React.createElement('button', {
+                            React.createElement('div', { className: 'flex bg-slate-50 p-1 rounded-full border border-slate-100 overflow-x-auto no-scrollbar max-w-[145px]' }, 
+                                ['Octubre', 'Noviembre', 'Diciembre', 'Enero'].map(m => React.createElement('button', {
                                     key: m,
                                     onClick: () => setActiveMonth(m),
-                                    className: `px-3 py-1.5 rounded-full text-[10px] font-bold transition-all whitespace-nowrap ${activeMonth === m ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`
+                                    className: `px-3 py-1.5 rounded-full text-[9px] font-bold transition-all whitespace-nowrap ${activeMonth === m ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`
                                 }, m.substring(0,3)))
                             )
                         ]),
-                        // SELECTOR DE SUCURSAL
-                        React.createElement('div', { className: 'flex gap-3 overflow-x-auto no-scrollbar' }, 
+                        
+                        React.createElement('div', { className: 'flex gap-2 overflow-x-auto no-scrollbar' }, 
                             ['Todas', 'Buenavista', 'Masaryk'].map(s => React.createElement('button', {
                                 key: s,
-                                onClick: () => setActiveSucursal(s),
-                                className: `flex-none px-6 py-2.5 rounded-2xl text-[11px] font-extrabold transition-all border ${activeSucursal === s ? 'bg-slate-900 border-slate-900 text-white shadow-xl shadow-slate-200' : 'bg-white border-slate-100 text-slate-500'}`
+                                onClick: () => { setActiveSucursal(s); setActiveVendedor('Todas'); },
+                                className: `flex-none px-4 py-2 rounded-xl text-[10px] font-extrabold transition-all border ${activeSucursal === s ? 'bg-slate-900 border-slate-900 text-white shadow-md' : 'bg-white border-slate-100 text-slate-500'}`
                             }, s))
+                        ),
+
+                        React.createElement('div', { className: 'flex gap-2 overflow-x-auto no-scrollbar pb-1' }, 
+                            ['Todas', ...new Set(DATA.vendedores.filter(v => v.name !== 'Otros / Ajustes' && (activeSucursal === 'Todas' || v.sucursal === activeSucursal)).map(v => v.name))].map(v => React.createElement('button', {
+                                key: v,
+                                onClick: () => setActiveVendedor(v),
+                                className: `flex-none px-3 py-1.5 rounded-lg text-[9px] font-bold transition-all border ${activeVendedor === v ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-slate-50 border-slate-100 text-slate-400'}`
+                            }, v === 'Todas' ? 'Equipo' : v))
                         )
                     ])
                 ]),
 
-                // CONTENIDO
-                React.createElement('main', { key: 'main', className: 'px-6 pt-6 space-y-6 fade-in' }, [
+                // MAIN
+                React.createElement('main', { key: 'main', className: 'px-6 pt-4 space-y-6 fade-in' }, [
                     
-                    // MÉTRICAS
+                    // KPIs
                     React.createElement('div', { className: 'grid grid-cols-2 gap-4' }, [
-                        { label: 'Facturación', val: formatCurrency(currentVal), color: 'text-slate-900' },
-                        { label: 'Crecimiento', val: prevVal ? `${(((currentVal-prevVal)/prevVal)*100).toFixed(0)}%` : '-', color: 'text-indigo-600' },
-                        { label: 'Ticket Medio', val: formatCurrency(currentTicket), color: 'text-slate-900' },
-                        { label: 'Transacciones', val: currentTrans, color: 'text-slate-900' }
-                    ].map(kpi => React.createElement('div', { key: kpi.label, className: 'card-mos p-6' }, [
-                        React.createElement('p', { className: 'text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2' }, kpi.label),
-                        React.createElement('h3', { className: `text-lg font-black ${kpi.color} tracking-tight` }, kpi.val)
+                        { label: 'Facturación', val: formatCurrency(stats.current), color: 'text-slate-900' },
+                        { label: 'Crecimiento', val: stats.prev !== null ? `${(((stats.current-stats.prev)/stats.prev)*100).toFixed(1)}%` : '-', color: 'text-indigo-600' },
+                        { label: 'Ticket Medio', val: stats.ticket > 0 ? formatCurrency(stats.ticket) : '-', color: 'text-slate-900' },
+                        { label: 'Transacciones', val: stats.trans, color: 'text-slate-900' }
+                    ].map(kpi => React.createElement('div', { key: kpi.label, className: 'card-mos p-5' }, [
+                        React.createElement('p', { className: 'text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1.5' }, kpi.label),
+                        React.createElement('h3', { className: `text-base font-black ${kpi.color} tracking-tight` }, kpi.val)
                     ]))),
 
-                    // GRÁFICO
+                    // TENDENCIA
                     React.createElement('div', { className: 'card-mos p-6' }, [
-                        React.createElement('div', { className: 'flex justify-between items-center mb-8' }, [
-                            React.createElement('h3', { className: 'text-[10px] font-black text-slate-800 uppercase tracking-[0.2em]' }, 'Análisis de Rendimiento'),
-                            activeMonth !== 'Noviembre' && React.createElement('div', { className: 'flex gap-2' }, [
-                                React.createElement('div', { className: 'w-2 h-2 bg-slate-100 rounded-full' }),
-                                React.createElement('div', { className: 'w-2 h-2 bg-indigo-500 rounded-full' })
-                            ])
-                        ]),
-                        React.createElement('div', { className: 'h-[260px]' }, 
+                        React.createElement('h3', { className: 'text-[9px] font-black text-slate-800 uppercase tracking-[0.2em] mb-6' }, `Evolución Histórica`),
+                        React.createElement('div', { className: 'h-[180px] w-full' }, 
                             React.createElement(ResponsiveContainer, null, 
-                                React.createElement(BarChart, { data: comparisonData, layout: 'vertical', margin: { left: -5, right: 10 } }, [
-                                    React.createElement(XAxis, { type: 'number', hide: true }),
-                                    React.createElement(YAxis, { dataKey: 'name', type: 'category', width: 100, axisLine: false, tickLine: false, tick: {fill: '#94a3b8', fontSize: 10, fontWeight: 700} }),
-                                    React.createElement(Tooltip, { formatter: v => formatCurrency(v), cursor: {fill: '#F9FAFB', radius: 12} }),
-                                    
-                                    activeMonth !== 'Noviembre' ? [
-                                        React.createElement(Bar, { key: 'p', dataKey: 'previous', fill: '#F1F5F9', radius: [0, 8, 8, 0], barSize: 8 }),
-                                        React.createElement(Bar, { key: 'c', dataKey: 'current', fill: '#4f46e5', radius: [0, 8, 8, 0], barSize: 8 })
-                                    ] : 
-                                    React.createElement(Bar, { dataKey: 'current', fill: '#4f46e5', radius: [0, 10, 10, 0], barSize: 20 })
+                                React.createElement(AreaChart, { data: trendData }, [
+                                    React.createElement(CartesianGrid, { strokeDasharray: '3 3', vertical: false, stroke: '#F1F5F9' }),
+                                    React.createElement(XAxis, { dataKey: 'mes', axisLine: false, tickLine: false, tick: {fill: '#94A3B8', fontSize: 10} }),
+                                    React.createElement(YAxis, { hide: true }),
+                                    React.createElement(Tooltip, { formatter: v => formatCurrency(v) }),
+                                    React.createElement(Area, { type: 'monotone', dataKey: 'valor', stroke: '#4f46e5', fill: '#4f46e511', strokeWidth: 3 })
                                 ])
                             )
                         )
                     ]),
 
-                    // LISTADO
+                    // DETALLE (CUADRADO AL 100%)
                     React.createElement('div', { className: 'space-y-4 pb-8' }, [
-                        React.createElement('h3', { className: 'text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2' }, `Ranking ${activeTab === 'depto' ? 'Departamentos' : activeTab === 'vendedor' ? 'Vendedores' : 'Servicios'}`),
-                        comparisonData.map((item, i) => React.createElement('div', { key: item.name, className: 'card-mos p-5 flex justify-between items-center active:scale-[0.98] transition-transform' }, [
-                            React.createElement('div', { className: 'flex items-center gap-4' }, [
-                                React.createElement('span', { className: 'text-xs font-black text-slate-200' }, `0${i+1}`),
-                                React.createElement('div', null, [
-                                    React.createElement('p', { className: 'text-xs font-bold text-slate-900 leading-none' }, item.name),
-                                    activeMonth !== 'Noviembre' && React.createElement('p', { className: 'text-[9px] font-bold text-slate-400 mt-1.5 uppercase' }, `Anterior: ${formatCurrency(item.previous)}`)
+                        React.createElement('h3', { className: 'text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2' }, 
+                            `Desglose por ${activeTab === 'depto' ? 'Departamento' : activeTab === 'vendedor' ? 'Vendedora' : 'Servicio'}`
+                        ),
+                        breakdown.map((item, i) => React.createElement('div', { key: item.name, className: 'card-mos p-5' }, [
+                            React.createElement('div', { className: 'flex justify-between items-start mb-3' }, [
+                                React.createElement('div', { className: 'flex items-center gap-3' }, [
+                                    React.createElement('span', { className: 'text-xs font-black text-slate-200 italic' }, `0${i+1}`),
+                                    React.createElement('div', null, [
+                                        React.createElement('p', { className: 'text-[11px] font-bold text-slate-900 leading-none' }, item.name),
+                                        stats.prev !== null && React.createElement('p', { className: 'text-[8px] font-bold text-slate-400 mt-1 uppercase' }, `Mes Ant: ${formatCurrency(item.pre)}`)
+                                    ])
+                                ]),
+                                React.createElement('div', { className: 'text-right' }, [
+                                    React.createElement('p', { className: 'text-[11px] font-black text-slate-900' }, formatCurrency(item.cur)),
+                                    stats.prev !== null && React.createElement('div', { className: `flex items-center justify-end gap-1 mt-0.5 ${item.cur >= item.pre ? 'text-emerald-500' : 'text-rose-500'}` }, [
+                                        React.createElement('span', { className: 'text-[9px] font-black' }, `${item.growth > 0 ? '+' : ''}${item.growth.toFixed(0)}%`)
+                                    ])
                                 ])
                             ]),
-                            React.createElement('div', { className: 'text-right' }, [
-                                React.createElement('p', { className: 'text-xs font-black text-slate-900' }, formatCurrency(item.current)),
-                                activeMonth !== 'Noviembre' && React.createElement('div', { className: `flex items-center justify-end gap-1 mt-1 ${item.growth >= 0 ? 'text-emerald-500' : 'text-rose-500'}` }, [
-                                    React.createElement('span', { className: 'text-[10px] font-black' }, `${item.growth > 0 ? '+' : ''}${item.growth.toFixed(0)}%`)
-                                ])
-                            ])
+                            React.createElement('div', { className: 'progress-bar-bg' }, 
+                                React.createElement('div', { className: 'progress-bar-fill', style: { width: `${(item.cur / maxVal) * 100}%` } })
+                            )
                         ]))
                     ])
                 ]),
 
-                // TAB BAR MOS STYLE
-                React.createElement('nav', { key: 'footer-nav', className: 'fixed bottom-0 left-0 right-0 ios-blur border-t border-slate-100 px-10 pt-5 pb-[env(safe-area-inset-bottom,30px)] flex justify-between items-center z-50' }, [
+                // TAB BAR
+                React.createElement('nav', { key: 'footer-nav', className: 'fixed bottom-0 left-0 right-0 ios-blur border-t border-slate-100 px-10 pt-4 pb-[env(safe-area-inset-bottom,25px)] flex justify-between items-center z-50 shadow-2xl' }, [
                     { id: 'depto', label: 'Deptos', icon: 'layers' },
-                    { id: 'vendedor', label: 'Vendedores', icon: 'users' },
+                    { id: 'vendedor', label: 'Vendedoras', icon: 'users' },
                     { id: 'producto', label: 'Servicios', icon: 'star' }
                 ].map(tab => {
                     const isActive = activeTab === tab.id;
@@ -293,8 +301,8 @@
                         onClick: () => setActiveTab(tab.id),
                         className: `relative flex flex-col items-center gap-1.5 transition-all ${isActive ? 'text-indigo-600' : 'text-slate-300'}`
                     }, [
-                        React.createElement('i', { 'data-lucide': tab.icon, size: 22, className: isActive ? 'stroke-[2.5px]' : 'stroke-[2px]' }),
-                        React.createElement('span', { className: 'text-[9px] font-black uppercase tracking-widest' }, tab.label),
+                        React.createElement('i', { 'data-lucide': tab.icon, size: 20, className: isActive ? 'stroke-[2.5px]' : 'stroke-[2px]' }),
+                        React.createElement('span', { className: 'text-[8px] font-black uppercase tracking-widest' }, tab.label),
                         isActive && React.createElement('div', { className: 'active-tab-indicator' })
                     ])
                 }))
